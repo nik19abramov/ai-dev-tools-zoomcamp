@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Delete TODO{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="section-title">
+        <span>Delete TODO</span>
+        <span class="pill danger">Careful</span>
+    </div>
+    <p class="todo-description" style="margin-bottom: 20px;">
+        Are you sure you want to delete <strong>{{ todo.title }}</strong>?
+    </p>
+
+    <form method="post" style="display:flex; gap:10px; flex-wrap:wrap;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a href="{% url 'todo_list' %}" class="btn btn-ghost">Cancel</a>
+    </form>
+</section>
+{% endblock %}

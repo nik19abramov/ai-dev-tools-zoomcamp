@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}TODO App{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: rgba(255, 255, 255, 0.06);
+            --card-strong: rgba(255, 255, 255, 0.12);
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #f97316;
+            --accent-2: #22d3ee;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --radius: 16px;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            --font: "Manrope", "Segoe UI", "Helvetica Neue", sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            background: radial-gradient(circle at 20% 20%, #1d2a4d, #0f172a 55%),
+                        radial-gradient(circle at 80% 0%, #0b4b52, #0f172a 45%),
+                        var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            margin: 0;
+            padding: 48px 18px 64px;
+        }
+
+        .frame {
+            max-width: 960px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .glow {
+            position: absolute;
+            inset: -80px;
+            background: radial-gradient(circle at 30% 20%, rgba(248, 113, 113, 0.15), transparent 35%),
+                        radial-gradient(circle at 80% 30%, rgba(34, 211, 238, 0.2), transparent 30%);
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        header .tagline {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 22px 24px 26px;
+            backdrop-filter: blur(8px);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 14px;
+            font-size: 18px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .pill.accent { background: rgba(249, 115, 22, 0.12); color: #ffb380; }
+        .pill.info { background: rgba(34, 211, 238, 0.14); color: #9eeefc; }
+        .pill.danger { background: rgba(239, 68, 68, 0.12); color: #fca5a5; }
+
+        form.inline { display: inline; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--card-strong);
+            color: var(--text);
+            cursor: pointer;
+            transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn:hover { transform: translateY(-1px); background: rgba(255, 255, 255, 0.14); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); }
+        .btn:active { transform: translateY(0); }
+        .btn-primary { background: linear-gradient(120deg, #f97316, #f59e0b); border-color: rgba(249, 115, 22, 0.4); color: #0f172a; }
+        .btn-primary:hover { background: linear-gradient(120deg, #fb923c, #f97316); }
+        .btn-danger { background: rgba(239, 68, 68, 0.16); border-color: rgba(239, 68, 68, 0.35); color: #fecdd3; }
+        .btn-ghost { background: transparent; border-color: rgba(255, 255, 255, 0.08); color: var(--muted); }
+
+        a { color: var(--accent-2); }
+
+        .todo-grid {
+            display: grid;
+            gap: 14px;
+            padding: 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        .todo-card {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 10px 16px;
+            align-items: start;
+            padding: 16px 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
+            transition: transform 120ms ease, border 120ms ease, background 120ms ease;
+        }
+
+        .todo-card:hover { transform: translateY(-2px); border-color: rgba(249, 115, 22, 0.3); background: rgba(255, 255, 255, 0.07); }
+
+        .todo-card.completed { border-color: rgba(34, 197, 94, 0.35); background: rgba(34, 197, 94, 0.08); }
+        .todo-card.completed .title { text-decoration: line-through; color: #9ae6b4; }
+
+        .todo-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; color: var(--muted); font-size: 13px; }
+        .todo-description { color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+        .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+        form.todo-form {
+            display: grid;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .field { display: grid; gap: 6px; }
+        .field label { font-weight: 700; color: var(--text); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .field .hint { color: var(--muted); font-size: 12px; font-weight: 500; }
+
+        input[type="text"], input[type="date"], textarea, .date-picker {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            font-size: 14px;
+            transition: border 120ms ease, box-shadow 120ms ease, background 120ms ease;
+        }
+
+        .flatpickr-input { width: 100%; cursor: pointer; }
+        .flatpickr-calendar {
+            background: #0b1224;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: var(--shadow);
+        }
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+            background: linear-gradient(120deg, #f97316, #f59e0b);
+            border-color: rgba(249, 115, 22, 0.5);
+            color: #0f172a;
+        }
+
+        textarea { min-height: 90px; resize: vertical; }
+
+        input:focus, textarea:focus { outline: 2px solid rgba(34, 211, 238, 0.4); border-color: rgba(34, 211, 238, 0.35); box-shadow: 0 10px 30px rgba(34, 211, 238, 0.1); }
+
+        .empty-state {
+            padding: 24px 18px;
+            border-radius: 14px;
+            border: 1px dashed rgba(255, 255, 255, 0.16);
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.03);
+            text-align: center;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 30px;
+        }
+
+        .toggle-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.12);
+            transition: 0.2s;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 3px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: 0.2s;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .toggle-input:checked + .slider {
+            background: linear-gradient(120deg, #22d3ee, #22c55e);
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .toggle-input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .drag-handle {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            display: grid;
+            place-items: center;
+            color: var(--muted);
+            cursor: grab;
+        }
+
+        .drag-handle:hover { border-color: rgba(249, 115, 22, 0.3); color: var(--text); }
+
+        .reorder-hint { color: var(--muted); font-size: 13px; display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+
+        @media (max-width: 640px) {
+            header { flex-direction: column; align-items: flex-start; }
+            .todo-card { grid-template-columns: 1fr; }
+            .actions { justify-content: flex-start; }
+            body { padding: 32px 14px 48px; }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="frame">
+    <div class="glow" aria-hidden="true"></div>
+    <header>
+        <div>
+            <h1>Pulse Tasks</h1>
+            <div class="tagline">Stay intentional, celebrate done items.</div>
+        </div>
+        <span class="pill info">Live workspace</span>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</div>
+</body>
+</html>

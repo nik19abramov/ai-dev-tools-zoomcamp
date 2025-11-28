@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}My TODOs{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="section-title" style="justify-content: space-between;">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <span>My TODOs</span>
+            <span class="pill accent">{{ todos|length }} total</span>
+        </div>
+        <div class="reorder-hint">
+            <span class="drag-handle" aria-hidden="true" style="pointer-events:none;">☰</span>
+            Drag cards to reorder
+        </div>
+    </div>
+
+    <form method="post" class="todo-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="field">
+            <label for="{{ form.title.id_for_label }}">Title</label>
+            {{ form.title }}
+            {{ form.title.errors }}
+        </div>
+        <div class="field">
+            <label for="{{ form.description.id_for_label }}">Description <span class="hint">Optional context</span></label>
+            {{ form.description }}
+            {{ form.description.errors }}
+        </div>
+        <div class="field">
+            <label for="{{ form.due_date.id_for_label }}">Due date <span class="hint">Fancy calendar enabled</span></label>
+            {{ form.due_date }}
+            {{ form.due_date.errors }}
+        </div>
+        <div class="field" style="display:flex; align-items:center; gap:12px;">
+            <label for="{{ form.completed.id_for_label }}" style="margin:0;">Mark as completed</label>
+            <label class="switch">
+                {{ form.completed }}
+                <span class="slider"></span>
+            </label>
+            {{ form.completed.errors }}
+        </div>
+        <div style="display:flex; justify-content:flex-end;">
+            <button type="submit" class="btn btn-primary">Add / Save TODO</button>
+        </div>
+    </form>
+
+    <div style="height: 1px; background: rgba(255, 255, 255, 0.08); margin: 10px 0 16px;"></div>
+
+    <ul class="todo-grid" id="todoList">
+        {% for todo in todos %}
+            <li class="todo-card {% if todo.completed %}completed{% endif %}" data-id="{{ todo.id }}">
+                <div class="drag-handle" title="Drag to reorder" aria-label="Drag to reorder">☰</div>
+                <div>
+                    <div class="todo-meta">
+                        <span class="pill {% if todo.completed %}info{% else %}accent{% endif %}">
+                            {% if todo.completed %}Completed{% else %}In progress{% endif %}
+                        </span>
+                        {% if todo.due_date %}
+                            <span class="pill">Due {{ todo.due_date }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="title" style="font-size:16px; font-weight:700; margin-top:6px;">{{ todo.title }}</div>
+                    {% if todo.description %}
+                        <div class="todo-description">{{ todo.description }}</div>
+                    {% endif %}
+                </div>
+                <div class="actions">
+                    <form method="post" action="{% url 'todo_toggle' todo.pk %}" class="inline">
+                        {% csrf_token %}
+                        <label class="switch">
+                            <input type="checkbox" class="toggle-input" {% if todo.completed %}checked{% endif %} onchange="this.form.submit()">
+                            <span class="slider"></span>
+                        </label>
+                    </form>
+                    <a href="{% url 'todo_edit' todo.pk %}" class="btn">Edit</a>
+                    <a href="{% url 'todo_delete' todo.pk %}" class="btn btn-danger">Delete</a>
+                </div>
+            </li>
+        {% empty %}
+            <li class="empty-state">No tasks yet. Set one intention above.</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    flatpickr(".date-picker", {
+        altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        animate: true,
+    });
+
+    const list = document.getElementById("todoList");
+    if (list) {
+        Sortable.create(list, {
+            handle: ".drag-handle",
+            animation: 150,
+            onEnd: () => {
+                const order = Array.from(list.querySelectorAll("[data-id]")).map((item) => Number(item.dataset.id));
+                const token = getCsrfToken();
+                fetch("{% url 'todo_reorder' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": token,
+                    },
+                    body: JSON.stringify({ order }),
+                });
+            },
+        });
+    }
+
+    function getCsrfToken() {
+        const cookieValue = document.cookie
+            .split(";")
+            .map((c) => c.trim())
+            .find((c) => c.startsWith("csrftoken="));
+        if (cookieValue) {
+            return cookieValue.split("=")[1];
+        }
+        const input = document.querySelector("input[name='csrfmiddlewaretoken']");
+        return input ? input.value : "";
+    }
+});
+</script>
+{% endblock %}

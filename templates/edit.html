@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Edit TODO{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="section-title">
+        <span>Edit TODO: {{ todo.title }}</span>
+        <span class="pill info">Tweak &amp; polish</span>
+    </div>
+    <form method="post" class="todo-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="field">
+            <label for="{{ form.title.id_for_label }}">Title</label>
+            {{ form.title }}
+            {{ form.title.errors }}
+        </div>
+        <div class="field">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+            {{ form.description.errors }}
+        </div>
+        <div class="field">
+            <label for="{{ form.due_date.id_for_label }}">Due date</label>
+            {{ form.due_date }}
+            {{ form.due_date.errors }}
+        </div>
+        <div class="field" style="display:flex; align-items:center; gap:12px;">
+            <label for="{{ form.completed.id_for_label }}" style="margin:0;">Mark as completed</label>
+            <label class="switch">
+                {{ form.completed }}
+                <span class="slider"></span>
+            </label>
+            {{ form.completed.errors }}
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'todo_list' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    flatpickr(".date-picker", {
+        altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        animate: true,
+    });
+});
+</script>
+{% endblock %}
