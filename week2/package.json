@@ -1,0 +1,14 @@
+{
+  "name": "ai-dev-tools-zoomcamp-week2",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "test": "echo \"No tests defined\""
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}

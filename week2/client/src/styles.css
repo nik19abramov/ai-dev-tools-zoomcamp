@@ -1,0 +1,87 @@
+.layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #0f172a;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+h1 {
+  margin: 0;
+}
+
+.card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  margin-bottom: 14px;
+}
+
+.button {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.button.primary {
+  background: #0ea5e9;
+  color: #fff;
+  border-color: #0ea5e9;
+}
+
+.join-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.join-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  flex: 1;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+.output pre {
+  white-space: pre-wrap;
+  background: #0b1727;
+  color: #f8fafc;
+  padding: 12px;
+  border-radius: 10px;
+  min-height: 120px;
+}
+
+.output-header {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.hint {
+  color: #475569;
+  margin: 4px 0 0;
+}
